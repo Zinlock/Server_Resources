@@ -30,7 +30,7 @@ registerInputEvent("fxDtsBrick", "onResourceTaken", "Self fxDtsBrick" TAB "Playe
 registerInputEvent("fxDtsBrick", "onStorageOpened", "Self fxDtsBrick" TAB "Player Player" TAB "Client GameConnection" TAB "Minigame Minigame");
 registerInputEvent("fxDtsBrick", "onStorageClosed", "Self fxDtsBrick" TAB "Player Player" TAB "Client GameConnection" TAB "Minigame Minigame");
 
-if(isFile($f = "Add-Ons/Script_EventDescriptions/server.cs"))
+if(!isPackage(EventDescriptionsServer) && isFile($f = "Add-Ons/Script_EventDescriptions/server.cs"))
 	exec($f);
 
 $OutputDescription_["fxDtsBrick", "makeResourceStorage"] = "[type] [filter] [title]" NL
