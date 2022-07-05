@@ -30,9 +30,6 @@ registerInputEvent("fxDtsBrick", "onResourceTaken", "Self fxDtsBrick" TAB "Playe
 registerInputEvent("fxDtsBrick", "onStorageOpened", "Self fxDtsBrick" TAB "Player Player" TAB "Client GameConnection" TAB "Minigame Minigame");
 registerInputEvent("fxDtsBrick", "onStorageClosed", "Self fxDtsBrick" TAB "Player Player" TAB "Client GameConnection" TAB "Minigame Minigame");
 
-if(!isPackage(EventDescriptionsServer) && isFile($f = "Add-Ons/Script_EventDescriptions/server.cs"))
-	exec($f);
-
 $OutputDescription_["fxDtsBrick", "makeResourceStorage"] = "[type] [filter] [title]" NL
 																													 "Sets this brick up into a resource storage brick." NL
 																													 "Can open storage by using the 'openResourceStorage' output event." NL
@@ -55,6 +52,7 @@ $OutputDescription_["fxDtsBrick", "exportResourceStorage"] = "[name]" NL
 $OutputDescription_["fxDtsBrick", "importResourceStorage"] = "[name]" NL
 																														 "Loads a previously saved resource storage backup." NL
 																														 "name (200): Save file name";
+
 // RESOURCE STORAGE vv
 
 function fxDTSBrick::exportResourceStorage(%brk, %id)
