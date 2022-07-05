@@ -945,8 +945,67 @@ function Player::giveResourceItem(%pl, %idx, %amt, %tell)
 
 		if(!$RSRC::DisablePickupText)
 		{
-			%str = "\c2+" @ %amt @ " \c6" @ %db.resourceTitle;
-			messageClient(%cl, '', %str, 2);
+			if(getSimTime() - %pl.resPickupTime > 3000 || %pl.resPickups <= 0)
+			{
+				%str = "<color:44FF44>+" @ %amt @ "<color:FFFFFF> " @ %db.resourceTitle;
+				%pl.resPickup[0] = %amt SPC %db;
+				%pl.resPickups = 1;
+			}
+			else
+			{
+				%found = -1;
+
+				for(%i = 0; %i < %pl.resPickups; %i++)
+				{
+					%res = %pl.resPickup[%i];
+					%f[%i] = %res;
+					if(getWord(%res, 1) == %db)
+					{
+						%pl.resPickup[%i] = setWord(%res, 0, getWord(%res, 0) + %amt);
+						%f[%i] = %pl.resPickup[%i];
+						%found = %i;
+						break;
+					}
+				}
+
+				if(%found == -1)
+				{
+					%pl.resPickups++;
+					for(%i = 0; %i <= %pl.resPickups; %i++)
+					{
+						if(%i == %pl.resPickups)
+							%pl.resPickup[0] = %amt SPC %db;
+						else
+							%pl.resPickup[%i+1] = %f[%i];
+					}
+				}
+				else if(%found > 0)
+				{
+					for(%i = 0; %i <= %found; %i++)
+					{
+						if(%i == %found)
+							%pl.resPickup[0] = %f[%found];
+						else
+							%pl.resPickup[%i+1] = %f[%i];
+					}
+				}
+
+				for(%i = 0; %i < %pl.resPickups; %i++)
+				{
+					%res = %pl.resPickup[%i];
+					%pre = (getWord(%res, 0) >= 0 ? "<color:44FF44>+" : "<color:FF4444>");
+					%st2 = (%str $= "" ? "" : %str @ "<br>") @ %pre @ getWord(%res, 0) @ "<color:FFFFFF> " @ getWord(%res, 1).resourceTitle;
+
+					if(strLen(%st2) > 254)
+						break;
+					
+					%str = %st2;
+				}
+			}
+
+			%pl.resPickupTime = getSimTime();
+
+			%cl.centerPrint("<font:arial:14>" @ %str, 3);
 		}
 	}
 
@@ -996,8 +1055,67 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 
 		if(!$RSRC::DisablePickupText)
 		{
-			%str = "\c0-" @ %amt @ " \c6" @ %db.resourceTitle;
-			messageClient(%cl, '', %str, 2);
+			if(getSimTime() - %pl.resPickupTime > 3000 || %pl.resPickups <= 0)
+			{
+				%str = "<color:FF4444>-" @ %amt @ "<color:FFFFFF> " @ %db.resourceTitle;
+				%pl.resPickup[0] = -%amt SPC %db;
+				%pl.resPickups = 1;
+			}
+			else
+			{
+				%found = -1;
+
+				for(%i = 0; %i < %pl.resPickups; %i++)
+				{
+					%res = %pl.resPickup[%i];
+					%f[%i] = %res;
+					if(getWord(%res, 1) == %db)
+					{
+						%pl.resPickup[%i] = setWord(%res, 0, getWord(%res, 0) - %amt);
+						%f[%i] = %pl.resPickup[%i];
+						%found = %i;
+						break;
+					}
+				}
+
+				if(%found == -1)
+				{
+					%pl.resPickups++;
+					for(%i = 0; %i <= %pl.resPickups; %i++)
+					{
+						if(%i == %pl.resPickups)
+							%pl.resPickup[0] = -%amt SPC %db;
+						else
+							%pl.resPickup[%i+1] = %f[%i];
+					}
+				}
+				else if(%found > 0)
+				{
+					for(%i = 0; %i <= %found; %i++)
+					{
+						if(%i == %found)
+							%pl.resPickup[0] = %f[%found];
+						else
+							%pl.resPickup[%i+1] = %f[%i];
+					}
+				}
+
+				for(%i = 0; %i < %pl.resPickups; %i++)
+				{
+					%res = %pl.resPickup[%i];
+					%pre = (getWord(%res, 0) >= 0 ? "<color:44FF44>+" : "<color:FF4444>");
+					%st2 = (%str $= "" ? "" : %str @ "<br>") @ %pre @ getWord(%res, 0) @ "<color:FFFFFF> " @ getWord(%res, 1).resourceTitle;
+
+					if(strLen(%st2) > 254)
+						break;
+					
+					%str = %st2;
+				}
+			}
+
+			%pl.resPickupTime = getSimTime();
+
+			%cl.centerPrint("<font:arial:14>" @ %str, 3);
 		}
 	}
 
