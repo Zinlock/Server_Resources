@@ -945,7 +945,7 @@ function Player::giveResourceItem(%pl, %idx, %amt, %tell)
 		{
 			if(getSimTime() - %pl.resPickupTime > 3000 || %pl.resPickups <= 0)
 			{
-				%str = "<color:44FF44>+" @ %amt @ "<color:FFFFFF> " @ %db.resourceTitle;
+				%str = "<font:arial:14><color:44FF44>+" @ %amt @ "<color:FFFFFF> " @ %db.resourceTitle;
 				%pl.resPickup[0] = %amt SPC %db;
 				%pl.resPickups = 1;
 			}
@@ -992,7 +992,7 @@ function Player::giveResourceItem(%pl, %idx, %amt, %tell)
 				{
 					%res = %pl.resPickup[%i];
 					%pre = (getWord(%res, 0) >= 0 ? "<color:44FF44>+" : "<color:FF4444>");
-					%st2 = (%str $= "" ? "" : %str @ "<br>") @ %pre @ getWord(%res, 0) @ "<color:FFFFFF> " @ getWord(%res, 1).resourceTitle;
+					%st2 = (%str $= "" ? "<font:arial:14>" : %str @ "<br>") @ %pre @ getWord(%res, 0) @ "<color:FFFFFF> " @ getWord(%res, 1).resourceTitle;
 
 					if(strLen(%st2) > 254)
 						break;
@@ -1003,7 +1003,7 @@ function Player::giveResourceItem(%pl, %idx, %amt, %tell)
 
 			%pl.resPickupTime = getSimTime();
 
-			%cl.centerPrint("<font:arial:14>" @ %str, 3);
+			%cl.centerPrint(%str, 3);
 		}
 	}
 
@@ -1055,7 +1055,7 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 		{
 			if(getSimTime() - %pl.resPickupTime > 3000 || %pl.resPickups <= 0)
 			{
-				%str = "<color:FF4444>-" @ %amt @ "<color:FFFFFF> " @ %db.resourceTitle;
+				%str = "<font:arial:14><color:FF4444>-" @ %amt @ "<color:FFFFFF> " @ %db.resourceTitle;
 				%pl.resPickup[0] = -%amt SPC %db;
 				%pl.resPickups = 1;
 			}
@@ -1082,7 +1082,7 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 					for(%i = 0; %i <= %pl.resPickups; %i++)
 					{
 						if(%i == %pl.resPickups)
-							%pl.resPickup[0] = -%amt SPC %db;
+							%pl.resPickup[0] = %amt SPC %db;
 						else
 							%pl.resPickup[%i+1] = %f[%i];
 					}
@@ -1102,7 +1102,7 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 				{
 					%res = %pl.resPickup[%i];
 					%pre = (getWord(%res, 0) >= 0 ? "<color:44FF44>+" : "<color:FF4444>");
-					%st2 = (%str $= "" ? "" : %str @ "<br>") @ %pre @ getWord(%res, 0) @ "<color:FFFFFF> " @ getWord(%res, 1).resourceTitle;
+					%st2 = (%str $= "" ? "<font:arial:14>" : %str @ "<br>") @ %pre @ getWord(%res, 0) @ "<color:FFFFFF> " @ getWord(%res, 1).resourceTitle;
 
 					if(strLen(%st2) > 254)
 						break;
@@ -1113,7 +1113,7 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 
 			%pl.resPickupTime = getSimTime();
 
-			%cl.centerPrint("<font:arial:14>" @ %str, 3);
+			%cl.centerPrint(%str, 3);
 		}
 	}
 
