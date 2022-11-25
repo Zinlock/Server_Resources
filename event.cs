@@ -354,9 +354,6 @@ function fxDTSBrick::getStorageCap(%brk)
 
 		if(!isObject(%res = getResourceFromName(%itm)) && !isObject(%res = getResourceFromIdx(%itm)))
 			continue;
-
-		if(isObject(getResourceFromName(%itm.resourceGroupTo)))
-			continue;
 		
 		%amt = restWords(%str);
 		%amt = mClamp(%amt, 0, 1000000);
@@ -514,9 +511,6 @@ function ResourceStorageBSM::onUserMove(%obj, %cl, %id, %move, %val)
 				{
 					%res = ResourceItemSet.getObject(%i).getID();
 
-					if(isObject(getResourceFromName(%res.resourceGroupTo)))
-						continue;
-					
 					if(%brk.getResourceCap(%res) < 0)
 						continue;
 					
@@ -734,9 +728,6 @@ function ResourceStorageBSM::onUserLoop(%obj, %cl)
 		{
 			%res = ResourceItemSet.getObject(%i).getID();
 
-			if(isObject(getResourceFromName(%res.resourceGroupTo)))
-				continue;
-			
 			if(%obj.resourcePick[%res] $= "")
 				%obj.resourcePick[%res] = 0;
 
@@ -841,7 +832,7 @@ function fxDTSBrick::setRandomResourceItem(%brk, %str, %min, %max)
 	{
 		%brk.setItem(%idb);
 		%brk.item.resources = %val;
-		%brk.item.resourceShapeName();
+		%brk.item.updateResource();
 	}
 }
 
@@ -853,7 +844,7 @@ function fxDTSBrick::setResourceItem(%brk, %idx, %val)
 	{
 		%brk.setItem(%idb);
 		%brk.item.resources = %val;
-		%brk.item.resourceShapeName();
+		%brk.item.updateResource();
 	}
 }
 
@@ -908,12 +899,7 @@ function Player::giveResourceItem(%pl, %idx, %amt, %tell)
 		return -1;
 	}
 
-	if(%db.resourceGroupTo !$= "" && isObject(%idb = getResourceFromName(%db.resourceGroupTo)))
-	{
-		return %pl.giveResourceItem(%idb.resourceIdx, %amt, %tell);
-	}
-
-	if(%db.resourceMax)
+	if(%db.resourceMax > 0)
 	{
 		if(%pl.rsrcCount[%db] < %db.resourceMax)
 		{
@@ -1023,11 +1009,6 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 	{
 		warn("Player::takeResourceItem() - invalid amount");
 		return -1;
-	}
-
-	if(%db.resourceGroupTo !$= "" && isObject(%idb = getResourceFromName(%db.resourceGroupTo)))
-	{
-		return %pl.takeResourceItem(%idb.resourceIdx, %amt, %tell);
 	}
 
 	if(%pl.rsrcCount[%db] > 0)
@@ -1163,23 +1144,9 @@ function Player::dropAllResources(%pl, %tell)
 		%idb = ResourceItemSet.getObject(%i);
 		if((%amt = %pl.rsrcCount[%idb]) > 0)
 		{
-			%sdb = %idb;
-			while(isObject(%db = getResourceFromName(%sdb.resourceGroupFrom)))
-			{
-				if(%amt >= %db.resourceGive)
-					%sdb = %db;
-				else
-					break;
-				
-				if(%i > 64)
-					return warn("serverCmdDropRes() - stuck in resource group loop!");
-				
-				%i++;
-			}
-
 			%itm = new Item()
 			{
-				dataBlock = %sdb;
+				dataBlock = %idb;
 				resources = %amt;
 				position = %pl.getHackPosition();
 				canPickup = true;

@@ -4,9 +4,6 @@
 // leather
 // non modern adhesive? (short stick with white gluey stuff?)
 
-// todo: remove the resource grouping system, instead opting for showing and hiding nodes based on the dropped resource amount 
-// ^ this will cut down on datablock spam a bit and would overall be much better code wise
-
 datablock ItemData(rsrc_GunCaseItem : hammerItem)
 {
 	iconName = "";
@@ -18,12 +15,16 @@ datablock ItemData(rsrc_GunCaseItem : hammerItem)
 
 	shapeFile = "./dts/guncase.dts";
 	uiName = "R: Gun Case";
-	resourceTitle = "Gun Case";
-	resourceName = "gun";
-	resourceSound = rsrc_PickupSound;
-	resourceGive = 1;
+	resourceTitle = "Gun Case"; // ui display name
+	resourceName = "gun"; // event name
+	resourceSound = rsrc_PickupSound; // sound to play when picking up this resource
+	resourceTakeSound = ""; // sound to play when dropping/losing this resource
+	resourceGive = 1; // default amount
 	resourceMax = 0;
-	resourceValue = 1000;
+	resourceValue = 1000; // score to give when sold
+	resourceGroupNode = ""; // node name prefix for grouping
+	resourceGroupDiv = 1; // increase grouping every n resources (e.g. money increases grouping every 100 resources)
+	resourceGroupMax = 0; // max node grouping (zero-indexed! goes from 0 to n-1)
 };
 
 datablock ItemData(rsrc_WoodPlanksItem : rsrc_GunCaseItem)
@@ -60,6 +61,9 @@ datablock ItemData(rsrc_ClothItem : rsrc_GunCaseItem)
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 50;
+	resourceGroupNode = "cloth";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 5;
 };
 
 datablock ItemData(rsrc_GunPowderItem : rsrc_GunCaseItem)
@@ -84,6 +88,9 @@ datablock ItemData(rsrc_MetalScrapItem : rsrc_GunCaseItem)
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 150;
+	resourceGroupNode = "scrap";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 4;
 };
 
 datablock ItemData(rsrc_PlasticPipesItem : rsrc_GunCaseItem)
@@ -96,6 +103,9 @@ datablock ItemData(rsrc_PlasticPipesItem : rsrc_GunCaseItem)
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 150;
+	resourceGroupNode = "plas";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 4;
 };
 
 datablock ItemData(rsrc_TapeRollItem : rsrc_GunCaseItem)
@@ -174,83 +184,41 @@ datablock ItemData(rsrc_GlassBottleItem : rsrc_GunCaseItem)
 
 datablock ItemData(rsrc_MoneyItem : rsrc_GunCaseItem)
 {
-	shapeFile = "./dts/moneyBill.dts";
+	shapeFile = "./dts/money.dts";
 	uiName = "R: Money";
 	resourceTitle = "Money";
 	resourceName = "money";
-	resourceGroupFrom = "moneybundle";
 	resourceSound = rsrc_PickupPaperSound;
 	resourceGive = 100;
 	resourceMax = 0;
 	resourceValue = 1;
-};
-
-datablock ItemData(rsrc_MoneyBundleItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/moneyBundle.dts";
-	uiName = "R: Money Bundle";
-	resourceTitle = "Money Bundle";
-	resourceName = "moneybundle";
-	resourceGroupTo = "money";
-	resourceGroupFrom = "moneystack";
-	resourceSound = rsrc_PickupPaperSound;
-	resourceGive = 500;
-	resourceMax = 0;
-};
-
-datablock ItemData(rsrc_MoneyStackItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/moneyStack.dts";
-	uiName = "R: Money Stack";
-	resourceTitle = "Money Stack";
-	resourceName = "moneystack";
-	resourceGroupTo = "moneybundle";
-	resourceSound = rsrc_PickupPaperSound;
-	resourceGive = 2500;
-	resourceMax = 0;
+	resourceGroupNode = "bill";
+	resourceGroupDiv = 100;
+	resourceGroupMax = 51;
 };
 
 datablock ItemData(rsrc_GoldCoinItem : rsrc_GunCaseItem)
 {
-	shapeFile = "./dts/goldCoin.dts";
+	colorShiftColor = "1.0 0.9 0.1 1.0";
+
+	shapeFile = "./dts/coins.dts";
 	uiName = "R: Gold Coin";
 	resourceTitle = "Gold Coin";
 	resourceName = "goldcoin";
-	resourceGroupFrom = "goldcoinpile";
 	resourceSound = rsrc_PickupCoinsSound;
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 500;
-};
-
-datablock ItemData(rsrc_GoldCoinPileItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/goldCoinPile.dts";
-	uiName = "R: Gold Coin Pile";
-	resourceTitle = "Gold Coin Pile";
-	resourceName = "goldcoinpile";
-	resourceGroupTo = "goldcoin";
-	resourceGroupFrom = "goldcoinstack";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 8;
-	resourceMax = 0;
-};
-
-datablock ItemData(rsrc_GoldCoinStackItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/goldCoinStack.dts";
-	uiName = "R: Gold Coin Stack";
-	resourceTitle = "Gold Coin Stack";
-	resourceName = "goldcoinstack";
-	resourceGroupTo = "goldcoinpile";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 35;
-	resourceMax = 0;
+	resourceGroupNode = "coin";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 23;
 };
 
 datablock ItemData(rsrc_GoldIngotItem : rsrc_GunCaseItem)
 {
-	shapeFile = "./dts/goldIngot.dts";
+	colorShiftColor = "1.0 0.9 0.1 1.0";
+
+	shapeFile = "./dts/ingots.dts";
 	uiName = "R: Gold Ingot";
 	resourceTitle = "Gold Ingot";
 	resourceName = "goldingot";
@@ -259,31 +227,9 @@ datablock ItemData(rsrc_GoldIngotItem : rsrc_GunCaseItem)
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 1500;
-};
-
-datablock ItemData(rsrc_GoldIngotPileItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/goldIngotPile.dts";
-	uiName = "R: Gold Ingot Pile";
-	resourceTitle = "Gold Ingot Pile";
-	resourceName = "goldingotpile";
-	resourceGroupTo = "goldingot";
-	resourceGroupFrom = "goldingotstack";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 4;
-	resourceMax = 0;
-};
-
-datablock ItemData(rsrc_GoldIngotStackItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/goldIngotStack.dts";
-	uiName = "R: Gold Ingot Stack";
-	resourceTitle = "Gold Ingot Stack";
-	resourceName = "goldingotstack";
-	resourceGroupTo = "goldingotpile";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 12;
-	resourceMax = 0;
+	resourceGroupNode = "ingot";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 13;
 };
 
 datablock ItemData(rsrc_PaperItem : rsrc_GunCaseItem)
@@ -362,77 +308,53 @@ datablock ItemData(rsrc_ShotgunCasingsItem : rsrc_GunCaseItem)
 
 datablock ItemData(rsrc_EmeraldItem : rsrc_GunCaseItem)
 {
-	shapeFile = "./dts/emerald.dts";
+	colorShiftColor = "0.1 1.0 0.1 1.0";
+
+	shapeFile = "./dts/emeralds.dts";
 	uiName = "R: Emerald";
 	resourceTitle = "Emerald";
 	resourceName = "emerald";
-	resourceGroupFrom = "emeraldpile";
 	resourceSound = rsrc_PickupCoinsSound;
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 2500;
-};
-
-datablock ItemData(rsrc_EmeraldPileItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/emeraldPile.dts";
-	uiName = "R: Emerald Pile";
-	resourceTitle = "Emerald Pile";
-	resourceName = "emeraldpile";
-	resourceGroupTo = "emerald";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 5;
-	resourceMax = 0;
+	resourceGroupNode = "gem";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 10;
 };
 
 datablock ItemData(rsrc_RubyItem : rsrc_GunCaseItem)
 {
+	colorShiftColor = "1.0 0.0 0.05 1.0";
+
 	shapeFile = "./dts/ruby.dts";
 	uiName = "R: Ruby";
 	resourceTitle = "Ruby";
 	resourceName = "ruby";
-	resourceGroupFrom = "rubypile";
 	resourceSound = rsrc_PickupCoinsSound;
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 4000;
-};
-
-datablock ItemData(rsrc_RubyPileItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/rubyPile.dts";
-	uiName = "R: Ruby Pile";
-	resourceTitle = "Ruby Pile";
-	resourceName = "rubypile";
-	resourceGroupTo = "ruby";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 4;
-	resourceMax = 0;
+	resourceGroupNode = "gem";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 10;
 };
 
 datablock ItemData(rsrc_DiamondItem : rsrc_GunCaseItem)
 {
-	shapeFile = "./dts/diamond.dts";
+	colorShiftColor = "0.1 0.4 1.0 1.0";
+
+	shapeFile = "./dts/diamonds.dts";
 	uiName = "R: Diamond";
 	resourceTitle = "Diamond";
 	resourceName = "diamond";
-	resourceGroupFrom = "diamondpile";
 	resourceSound = rsrc_PickupCoinsSound;
 	resourceGive = 1;
 	resourceMax = 0;
 	resourceValue = 6000;
-};
-
-datablock ItemData(rsrc_DiamondPileItem : rsrc_GunCaseItem)
-{
-	shapeFile = "./dts/diamondPile.dts";
-	uiName = "R: Diamond Pile";
-	resourceTitle = "Diamond Pile";
-	resourceName = "diamondpile";
-	resourceGroupTo = "diamond";
-	resourceSound = rsrc_PickupCoinsSound;
-	resourceGive = 3;
-	resourceMax = 0;
+	resourceGroupNode = "gem";
+	resourceGroupDiv = 1;
+	resourceGroupMax = 6;
 };
 
 datablock ItemData(rsrc_SeedsItem : rsrc_GunCaseItem)
@@ -447,20 +369,14 @@ datablock ItemData(rsrc_SeedsItem : rsrc_GunCaseItem)
 	resourceValue = 50;
 };
 
-// if you fuck up resourceGroupTo/From and pick up the item it'll crash the server. fun
-
-// resourceMax probably shouldn't be set for groupable resources
-// please do note that the max resource setting is a very half baked attempt at allowing for resource caps
-// not much effort was put into making it or testing it and it might not work properly
-
 function ItemData::onResourcePickup(%db, %item, %pl) // picked up resource item
 {
-	%item.resourceShapeName();
+	%item.updateResource();
 }
 
 function ItemData::onResourceDrop(%db, %item, %pl) // dropped resource item
 {
-	%item.resourceShapeName();
+	%item.updateResource();
 }
 
 function ItemData::onResourceGiven(%db, %amt, %pl) // gained resource
@@ -473,7 +389,7 @@ function ItemData::onResourceTaken(%db, %amt, %pl) // lost resource
 
 }
 
-function Item::resourceShapeName(%item)
+function Item::updateResource(%item)
 {
 	if(isObject(BrickRandomItemSpawnData))
 	{
@@ -484,12 +400,33 @@ function Item::resourceShapeName(%item)
 	%db = %item.getDatablock();
 	if(%db.isResource)
 	{
-		if(%item.resources)
-			%item.schedule(0, setShapeName, %item.resources @ "x " @ %db.resourceTitle);
-		else
-			%item.schedule(0, setShapeName, %db.resourceGive @ "x " @ %db.resourceTitle);
+		%res = %item.resources;
+
+		if(!%res)
+			%res = %db.resourceGive;
+		
+		%item.schedule(0, setShapeName, %res @ "x " @ %db.resourceTitle);
+		
 		%item.schedule(0, setShapeNameDistance, 15);
 		%item.schedule(0, setShapeNameColor, "0.1 1.0 0.1");
+
+		if(%db.resourceGroupNode !$= "" && %db.resourceGroupMax > 0)
+		{
+			if(%res >= %db.resourceGroupMax && %db.resourceGroupDiv <= 0 || (%res / %db.resourceGroupDiv) >= %db.resourceGroupMax && %db.resourceGroupDiv > 0)
+				%item.unHideNode("ALL");
+			else
+			{
+				%item.hideNode("ALL");
+
+				%cts = %res;
+
+				if(%db.resourceGroupDiv > 0)
+					%cts = %res / %db.resourceGroupDiv;
+				
+				for(%i = 0; %i < %cts; %i++)
+					%item.unHideNode(%db.resourceGroupNode @ %i);
+			}
+		}
 	}
 }
 
@@ -524,19 +461,31 @@ package ResourcePickupPackage
 				if(!%item.resources)
 				{
 					if(isObject(%item.spawnBrick))
-						%item.respawn();
+					{
+						// %item.respawn();
+						%item.fadeOut();
+						%item.fadeIn(1000);
+					}
 					else
 						%item.schedule(0, delete);
 				}
 				else
-					%item.respawn();
+				{
+					// %item.respawn();
+					%item.fadeOut();
+					%item.fadeIn(1000);
+				}
 			}
 		}
 		else
 		{
 			%pl.giveResourceItem(%db.resourceIdx, %db.resourceGive, true);
 			if(isObject(%item.spawnBrick) && %item.static)
-				%item.respawn();
+			{
+				// %item.respawn();
+				%item.fadeOut();
+				%item.fadeIn(1000);
+			}
 			else
 				%item.schedule(0, delete);
 		}
@@ -589,9 +538,11 @@ package ResourcePickupPackage
 
 		if(%db.isResource)
 		{
-			%itm.resourceShapeName();
+			%itm.updateResource();
 			%itm.schedule(0, setNodeColor, "ALL", %db.colorShiftColor);
-			%itm.schedule(0, startFade, 1, 1, 0);
+
+			if(getWord(%db.colorShiftColor, 3) < 1.0)
+				%itm.schedule(0, startFade, 1, 1, 0);
 		}
 
 		return %r;
@@ -605,7 +556,9 @@ package ResourcePickupPackage
 			if(%db.isResource)
 			{
 				%item.schedule(0, setNodeColor, "ALL", %db.colorShiftColor);
-				%item.schedule(0, startFade, 1, 1, 0);
+
+				if(getWord(%db.colorShiftColor, 3) < 1.0)
+					%item.schedule(0, startFade, 1, 1, 0);
 			}
 		}
 		
@@ -622,6 +575,9 @@ activatePackage(ResourcePickupPackage);
 
 function Player::noResources(%pl)
 {
+	if(%pl.rsrcDisable)
+		return 1;
+
 	if(isObject(%cl = %pl.Client))
 	{
 		for(%i = 0; %i < getFieldCount($RSRC::PickupExcludeTeams); %i++)
@@ -636,8 +592,6 @@ function Player::noResources(%pl)
 			}
 		}
 	}
-	else if(%pl.rsrcDisable)
-		return 1;
 
 	if(!$RSRC::PickupExcludeInverse)
 		return 0;
