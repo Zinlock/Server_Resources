@@ -432,6 +432,13 @@ function Item::updateResource(%item)
 
 package ResourcePickupPackage
 {
+	function onMissionLoaded(%x)
+	{
+		Parent::onMissionLoaded(%x);
+
+		rsrcMakeItemTable();
+	}
+
 	function Player::Pickup(%pl, %item)
 	{
 		%db = %item.getDatablock();
@@ -501,7 +508,7 @@ package ResourcePickupPackage
 
 	function Armor::onDisabled(%db, %pl, %state)
 	{
-		if($RSRC::DropAllOnDeath)
+		if($Pref::Resources::DropAllOnDeath)
 			%pl.dropAllResources();
 
 		return Parent::onDisabled(%db, %pl, %state);
@@ -509,7 +516,7 @@ package ResourcePickupPackage
 
 	function Armor::onRemove(%db, %pl, %x, %y)
 	{
-		if($RSRC::DropAllOnDeath)
+		if($Pref::Resources::DropAllOnDeath)
 			%pl.dropAllResources();
 		
 		return Parent::onRemove(%db, %pl, %x, %y);
@@ -564,12 +571,6 @@ package ResourcePickupPackage
 		
 		return Parent::fadeIn(%item, %del);
 	}
-
-	function onExit(%a)
-	{
-		export("$RSRC::*", "config/server/resourcesys.cs");
-		Parent::onExit(%a);
-	}
 };
 activatePackage(ResourcePickupPackage);
 
@@ -578,23 +579,24 @@ function Player::noResources(%pl)
 	if(%pl.rsrcDisable)
 		return 1;
 
-	if(isObject(%cl = %pl.Client))
-	{
-		for(%i = 0; %i < getFieldCount($RSRC::PickupExcludeTeams); %i++)
-		{
-			%str = getField($RSRC::PickupExcludeTeams, %i);
-			if(%cl.slyrTeam.name $= %str || %cl.team.name $= %str || %cl.team $= %str)
-			{
-				if(!$RSRC::PickupExcludeInverse)
-					return 1;
-				else
-					return 0;
-			}
-		}
-	}
+	return 0;
+	// if(isObject(%cl = %pl.Client))
+	// {
+	// 	for(%i = 0; %i < getFieldCount($Pref::Resources::PickupExcludeTeams); %i++)
+	// 	{
+	// 		%str = getField($Pref::Resources::PickupExcludeTeams, %i);
+	// 		if(%cl.slyrTeam.name $= %str || %cl.team.name $= %str || %cl.team $= %str)
+	// 		{
+	// 			if(!$Pref::Resources::PickupExcludeInverse)
+	// 				return 1;
+	// 			else
+	// 				return 0;
+	// 		}
+	// 	}
+	// }
 
-	if(!$RSRC::PickupExcludeInverse)
-		return 0;
-	else
-		return 1;
+	// if(!$Pref::Resources::PickupExcludeInverse)
+	// 	return 0;
+	// else
+	// 	return 1;
 }

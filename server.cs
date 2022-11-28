@@ -6,16 +6,24 @@ if($AddOn__Event_Variables && isFile("Add-Ons/Event_Variables/server.cs")) // on
 	}
 }
 
-$RSRC::DropAllOnDeath = true; // should all resources be dropped on death?
-$RSRC::AllowManualDrop = true; // should players be allowed to drop their resources thru commands?
-$RSRC::PickupExcludeTeams = "Guards" TAB "Guard"; // should these slayer teams be prevented from picking up dropped resources?
-$RSRC::PickupExcludeInverse = false; // should PickupExcludeTeams indicate who can pick up resources? (instead of who can not)
-$RSRC::DisableResourceCheck = false; // should the /resources command be disabled?
-$RSRC::DisablePickupText = false; // should the picked up resources be hidden from the chat?
-$RSRC::DisablePickupSound = false; // should the picked up resources be silent?
+function quickRegisterPref(%name, %category, %pref, %type, %default)
+{
+	%folder = fileBase(filePath($Con::File));
 
-if(isFile("config/server/resourcesys.cs"))
-	exec("config/server/resourcesys.cs");
+	if ($RTB::Hooks::ServerControl)
+		RTB_registerPref(%name, %category, %pref, %type, %folder, %default, false, false, "");
+	else
+		eval("if(" @ %pref @ " $= \"\") " @ %pref @ " = \"" @ %default @ "\";");
+}
+
+quickRegisterPref("Drop all on death", "Resources", "$Pref::Resources::DropAllOnDeath", "bool", 1);
+quickRegisterPref("Allow manual dropping", "Resources", "$Pref::Resources::AllowManualDrop", "bool", 1);
+quickRegisterPref("Disable /resources", "Resources", "$Pref::Resources::DisableResourceCheck", "bool", 0);
+quickRegisterPref("Disable pickup text", "Resources", "$Pref::Resources::DisablePickupText", "bool", 0);
+quickRegisterPref("Disable pickup sound", "Resources", "$Pref::Resources::DisablePickupSound", "bool", 0);
+
+if(isFile("config/server/resourcesaves.cs"))
+	exec("config/server/resourcesaves.cs");
 
 datablock AudioProfile(rsrc_PickupSound)
 {
@@ -152,8 +160,6 @@ exec("./support_brickshiftmenu.cs");
 exec("./event.cs");
 exec("./items.cs");
 exec("./commands.cs");
-
-schedule(0, 0, rsrcMakeItemTable);
 
 // ...
 

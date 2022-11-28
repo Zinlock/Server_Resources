@@ -1,6 +1,11 @@
 registerOutputEvent("Player", "dropAllResources", "bool");
 registerOutputEvent("Bot", "dropAllResources", "");
 
+registerOutputEvent("Player", "saveResources", "string 200 200");
+registerOutputEvent("Player", "loadResources", "string 200 200");
+
+registerOutputEvent("Player", "setCanPickupResources", "bool");
+
 registerOutputEvent("Player", "giveRandomResourceItem", "string 200 200\tint 1 999999 1\tint 1 999999 1\tbool");
 registerOutputEvent("Bot", "giveRandomResourceItem", "string 200 200\tint 1 999999 1\tint 1 999999 1");
 registerOutputEvent("fxDtsBrick", "setRandomResourceItem", "string 200 200\tint 1 999999 1\tint 1 999999 1");
@@ -793,6 +798,43 @@ function ResourceStorageBSM::onUserEnd(%obj, %cl)
 
 // RESOURCE STORAGE ^^
 
+function Player::saveResources(%pl, %str)
+{
+	if(!isObject(%cl = %pl.client))
+		return;
+
+	%str = getSafeVariableName(%str);
+	
+	for(%i = 0; %i < ResourceItemSet.getCount(); %i++)
+	{
+		%res = ResourceItemSet.getObject(%i).getID();
+
+		$ResourceSave_[%cl.getBLID(), %str, %res.resourceName] = %pl.rsrcCount[%res];
+	}
+
+	export("$ResourceSave_*", "config/server/resourcesaves.cs");
+}
+
+function Player::loadResources(%pl, %str)
+{
+	if(!isObject(%cl = %pl.client))
+		return;
+		
+	%str = getSafeVariableName(%str);
+	
+	for(%i = 0; %i < ResourceItemSet.getCount(); %i++)
+	{
+		%res = ResourceItemSet.getObject(%i).getID();
+
+		%pl.rsrcCount[%res] = $ResourceSave_[%cl.getBLID(), %str, %res.resourceName];
+	}
+}
+
+function Player::setCanPickupResources(%pl, %val)
+{
+	%pl.rsrcDisable = !%val;
+}
+
 function Player::giveRandomResourceItem(%pl, %str, %min, %max, %tell)
 {
 	if(%min >= %max)
@@ -924,10 +966,10 @@ function Player::giveResourceItem(%pl, %idx, %amt, %tell)
 	
 	if(%tell && isObject(%cl = %pl.Client) && %amt > 0)
 	{
-		if(%amt > 0 && !$RSRC::DisablePickupSound)
+		if(%amt > 0 && !$Pref::Resources::DisablePickupSound)
 			serverPlay3D(%db.resourceSound, %pl.getHackPosition());
 
-		if(!$RSRC::DisablePickupText)
+		if(!$Pref::Resources::DisablePickupText)
 		{
 			if(getSimTime() - %pl.resPickupTime > 3000 || %pl.resPickups <= 0)
 			{
@@ -1029,10 +1071,10 @@ function Player::takeResourceItem(%pl, %idx, %amt, %tell)
 	
 	if(%tell && isObject(%cl = %pl.Client) && %amt > 0)
 	{
-		if(!$RSRC::DisablePickupSound)
+		if(!$Pref::Resources::DisablePickupSound)
 			serverPlay3D(%db.resourceTakeSound, %pl.getHackPosition());
 
-		if(!$RSRC::DisablePickupText)
+		if(!$Pref::Resources::DisablePickupText)
 		{
 			if(getSimTime() - %pl.resPickupTime > 3000 || %pl.resPickups <= 0)
 			{

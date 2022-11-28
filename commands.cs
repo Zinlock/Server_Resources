@@ -1,6 +1,6 @@
 function serverCmdResources(%cl)
 {
-	if($RSRC::DisableResourceCheck)
+	if($Pref::Resources::DisableResourceCheck)
 		return;
 
 	if(isObject(%pl = %cl.Player))
@@ -45,7 +45,7 @@ function serverCmdResources(%cl)
 
 function serverCmdDropRes(%cl, %amt, %a, %b, %c, %d, %e, %f, %g, %h)
 {
-	if(!$RSRC::AllowManualDrop)
+	if(!$Pref::Resources::AllowManualDrop)
 		return;
 
 	%amt = mClamp(%amt, 1, 999999);
@@ -146,124 +146,4 @@ function serverCmdResourceID(%cl, %a, %b, %c, %d)
 	}
 
 	messageClient(%cl, '', "\c2Found resource: " @ %db.resourceTitle @ " (vce res_" @ %db.resourceName @ ", id " @ %db.resourceIdx @ ")");
-}
-
-// Yes, I really am too lazy to make this work with glass prefs
-function serverCmdRsys(%cl, %id, %act, %a, %b, %c, %d, %e)
-{
-	%str = trim(%a SPC %b SPC %c SPC %d SPC %e);
-
-	if(!%cl.isAdmin)
-		return messageClient(%cl, '', "\c5You are not an admin.");
-	
-	switch$(%id)
-	{
-		case "dropAll":
-			if(%act $= "")
-				return messageClient(%cl, '', "\c5Invalid value");
-			
-			%prev = $RSRC::DropAllOnDeath;
-			$RSRC::DropAllOnDeath = (%res = mClamp(%act, 0, 1));
-			
-			if(%prev != %res)
-				messageClient(%cl, '', "\c2" @ (%res ? "Enabled" : "Disabled") @ " drop on death");
-		case "exclude":
-			if(%act $= "add")
-			{
-				if(%str !$= "")
-				{
-					%t = $RSRC::PickupExcludeTeams;
-					if(!hasTabbedItemOnList(%t, %str))
-					{
-						$RSRC::PickupExcludeTeams = addTabbedItemToList(%t,%str);
-						messageClient(%cl, '', "\c2Excluding team " @ %str @ " from picking up resources");
-					}
-					else
-						messageClient(%cl, '', "\c2This team is already excluded");
-				}
-				else
-					messageClient(%cl, '', "\c5Invalid team name");
-			}
-			else if(%act $= "remove")
-			{
-				if(%str !$= "")
-				{
-					%t = $RSRC::PickupExcludeTeams;
-					if(hasTabbedItemOnList(%t, %str))
-					{
-						$RSRC::PickupExcludeTeams = removeTabbedItemFromList(%t,%str);
-						messageClient(%cl, '', "\c2Un-excluded team " @ %str @ " from picking up resources");
-					}
-					else
-						messageClient(%cl, '', "\c2This team is not excluded");
-				}
-				else
-					messageClient(%cl, '', "\c5Invalid team name");
-			}
-			else if(%act $= "list")
-			{
-				%t = $RSRC::PickupExcludeTeams;
-				for(%i = 0; %i < getFieldCount(%t); %i++)
-				{
-					%str = trim(getField(%t, %i));
-					messageClient(%cl, '', "\c2" @ %str);
-				}
-			}
-			else
-			{
-				messageClient(%cl, '', "\c5Invalid action");
-				messageClient(%cl, '', "\c5Usage: /rsys exclude [add | remove | list]");
-			}
-		case "excludeInverse":
-			if(%act $= "")
-				return messageClient(%cl, '', "\c5Invalid value");
-			
-			%prev = $RSRC::PickupExcludeInverse;
-			$RSRC::PickupExcludeInverse = (%res = mClamp(%act, 0, 1));
-			
-			if(%prev != %res)
-				messageClient(%cl, '', "\c2" @ (%res ? "Inverted" : "Reverted") @ " exclude list");
-		case "manualDrop":
-			if(%act $= "")
-				return messageClient(%cl, '', "\c5Invalid value");
-			
-			%prev = $RSRC::AllowManualDrop;
-			$RSRC::AllowManualDrop = (%res = mClamp(%act, 0, 1));
-			
-			if(%prev != %res)
-				messageClient(%cl, '', "\c2" @ (%res ? "Enabled" : "Disabled") @ " manual resource dropping");
-		case "noCheck":
-			if(%act $= "")
-				return messageClient(%cl, '', "\c5Invalid value");
-			
-			%prev = $RSRC::DisableResourceCheck;
-			$RSRC::DisableResourceCheck = (%res = mClamp(%act, 0, 1));
-			
-			if(%prev != %res)
-				messageClient(%cl, '', "\c2" @ (%res ? "Disabled" : "Enabled") @ " resources command");
-		case "noPickupText":
-			if(%act $= "")
-				return messageClient(%cl, '', "\c5Invalid value");
-			
-			%prev = $RSRC::DisablePickupText;
-			$RSRC::DisablePickupText = (%res = mClamp(%act, 0, 1));
-			
-			if(%prev != %res)
-				messageClient(%cl, '', "\c2" @ (%res ? "Disabled" : "Enabled") @ " pickup text");
-		case "noPickupSound":
-			if(%act $= "")
-				return messageClient(%cl, '', "\c5Invalid value");
-			
-			%prev = $RSRC::DisablePickupSound;
-			$RSRC::DisablePickupSound = (%res = mClamp(%act, 0, 1));
-			
-			if(%prev != %res)
-				messageClient(%cl, '', "\c2" @ (%res ? "Disabled" : "Enabled") @ " pickup sound");
-		default:
-			messageClient(%cl, '', "\c5Invalid command");
-			messageClient(%cl, '', "\c5Usage: /rsys [setting] [value]");
-			messageClient(%cl, '', "\c5Valid settings: dropAll, exclude, excludeInverse, manualDrop, noCheck, noPickupText, noPickupSound");
-	}
-
-	export("$RSRC::*", "config/server/resourcesys.cs");
 }
