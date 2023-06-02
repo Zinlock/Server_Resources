@@ -1,5 +1,13 @@
 // Support_brickShiftMenu.cs by Oxy (260031)
 
+function GameConnection::longCenterPrint(%cl, %str, %time)
+{
+	if(strlen(%str) < 240)
+		commandToClient(%cl, 'centerPrint', %str, %time);
+	else
+		commandToClient(%cl, 'centerPrint', '%2%3%4%5%6', %time, getSubStr(%str, 0, 240), getSubStr(%str, 240, 240), getSubStr(%str, 480, 240), getSubStr(%str, 720, 240), getSubStr(%str, 960, 240));
+}
+
 $BSM::ROT = 0; // rotate id
 $BSM::MOV = 1; // move id
 $BSM::PLT = 2; // plant id
@@ -218,7 +226,7 @@ function BSMObject::printToClient(%obj, %cl)
 		%str = %str @ %entry;
 	}
 
-	%cl.centerprint(%str, 1);
+	%cl.longCenterPrint(%str, 1);
 }
 
 function BSMObject::onUserMove(%obj, %cl, %id, %move, %val)
